@@ -9,19 +9,41 @@
    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
    crossorigin=""></script>
   <style>
-    #worldmap { height: 100vh; }
+    @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&display=swap');    
+
+    #worldmap {
+      height: 100vh;
+      z-index: 1;
+    }
 
     body {
       padding: 0;
       margin: 0;
-      display: grid; 
-      grid-template-columns: 3fr 1fr;
+      width: 100%;
+      height: 100%;
+    }
+
+    .block {
+      font-family: 'Comfortaa', cursive;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 300px;
+      height: 150px;
+      padding: 10px;
+      background: #2B2D42;
+      color: #EDF2F4;
+      z-index: 100;
+      overflow-x: scroll;
+    }
+
+    .description {
+      word-wrap: break-word;
     }
   </style>
 </head>
 <body>
   <div id="worldmap"></div>
-
   <div class="block">
     <p class="title">test title</p>
     <p class="description">test desc</p>
@@ -44,38 +66,30 @@ var northEast = map.unproject([ w, 0], map.getMaxZoom()-1);
 var bounds = new L.LatLngBounds( southWest, northEast);
 
 map.setMaxBounds(bounds);
-var popup = L.popup();
 L.imageOverlay( url, bounds).addTo(map);
 
-/*var marker = L.marker([-400, 400], {
-title: "Море"
-}).addTo(map);*/
-
 var locations = [
-		  ["МОРЕ",-400,400],
-		  ["НЕ МОРЕ",-400,600],
+		  ["Море", "Описание моря", -400, 400],
+		  ["НЕ МОРЕ", "ОПИСАНИЕ НЕ МОРЯ", -400, 600],
+      /*Добавлять по аналогии: [Титульник, описание, x, y]*/
 ];
 
+var points = document.getElementsByClassName('leaflet-marker-icon');
+
 for (var i = 0; i < locations.length; i++) {
-	marker = new L.marker([locations[i][1],locations[i][2]])
-		.bindPopup(locations[i][0])
-		.addTo(map)
-    .onclick = function() {
-      console.log('YEEEEH!!!')
-    };
+	marker = new L.marker([locations[i][2],locations[i][3]])
+		.addTo(map);
+
+  points[i].onclick = setBlockData(i);
 }
 
-/*function onMapClick(e) {
-popup
-.setLatLng(e.latlng)
-.setContent(e.latlng.toString())
-.openOn(map);
-}
-
-map.on('click', onMapClick);*/
-
-document.getElementsByClassName('leaflet-marker-icon').onclick = function() {
- console.log(document.getElementsByClassName('leaflet-marker-icon')); 
+function setBlockData(i) {
+  return function() {
+    document.getElementsByClassName('title')[0]
+            .innerText = locations[i][0];
+    document.getElementsByClassName('description')[0]
+            .innerHTML = locations[i][1];
+  }
 }
 </script>
 </body>
