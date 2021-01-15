@@ -43,28 +43,40 @@ var southWest = map.unproject([ 0, h], map.getMaxZoom()-1);
 var northEast = map.unproject([ w, 0], map.getMaxZoom()-1);
 var bounds = new L.LatLngBounds( southWest, northEast);
 
+map.setMaxBounds(bounds);
+var popup = L.popup();
 L.imageOverlay( url, bounds).addTo(map);
 
-var marker = L.marker([-400, 400], {
+/*var marker = L.marker([-400, 400], {
 title: "Море"
-}).addTo(map);
+}).addTo(map);*/
 
-marker.bindPopup("Это море. ЫВФ 123" + '<a href="http://www.google.com">Visit Google</a>');
+var locations = [
+		  ["МОРЕ",-400,400],
+		  ["НЕ МОРЕ",-400,600],
+];
 
-map.setMaxBounds(bounds);
+for (var i = 0; i < locations.length; i++) {
+	marker = new L.marker([locations[i][1],locations[i][2]])
+		.bindPopup(locations[i][0])
+		.addTo(map)
+    .onclick = function() {
+      console.log('YEEEEH!!!')
+    };
+}
 
-var popup = L.popup();
-
-function onMapClick(e) {
+/*function onMapClick(e) {
 popup
 .setLatLng(e.latlng)
 .setContent(e.latlng.toString())
 .openOn(map);
 }
 
-map.on('click', onMapClick);
+map.on('click', onMapClick);*/
 
-console.log(marker.options);
+document.getElementsByClassName('leaflet-marker-icon').onclick = function() {
+ console.log(document.getElementsByClassName('leaflet-marker-icon')); 
+}
 </script>
 </body>
 </html>
