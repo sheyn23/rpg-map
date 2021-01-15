@@ -1,0 +1,70 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>test map</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+   integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+   crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+   integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+   crossorigin=""></script>
+  <style>
+    #worldmap { height: 100vh; }
+
+    body {
+      padding: 0;
+      margin: 0;
+      display: grid; 
+      grid-template-columns: 3fr 1fr;
+    }
+  </style>
+</head>
+<body>
+  <div id="worldmap"></div>
+
+  <div class="block">
+    <p class="title">test title</p>
+    <p class="description">test desc</p>
+  </div>
+
+<script>
+var map = L.map('worldmap', {
+attributionControl: false,
+minZoom: 0,
+maxZoom: 3,
+center: [0, 0],
+zoom: 0,
+crs: L.CRS.Simple
+});
+var w = 3840;
+var h = 2160;
+var url = './map.jpg';
+var southWest = map.unproject([ 0, h], map.getMaxZoom()-1);
+var northEast = map.unproject([ w, 0], map.getMaxZoom()-1);
+var bounds = new L.LatLngBounds( southWest, northEast);
+
+L.imageOverlay( url, bounds).addTo(map);
+
+var marker = L.marker([-400, 400], {
+title: "Море"
+}).addTo(map);
+
+marker.bindPopup("Это море. ЫВФ 123" + '<a href="http://www.google.com">Visit Google</a>');
+
+map.setMaxBounds(bounds);
+
+var popup = L.popup();
+
+function onMapClick(e) {
+popup
+.setLatLng(e.latlng)
+.setContent(e.latlng.toString())
+.openOn(map);
+}
+
+map.on('click', onMapClick);
+
+console.log(marker.options);
+</script>
+</body>
+</html>
