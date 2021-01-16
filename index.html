@@ -50,17 +50,17 @@
   </div>
 
 <script>
-var map = L.map('worldmap', {
-attributionControl: false,
-minZoom: 0,
-maxZoom: 3,
-center: [0, 0],
-zoom: 0,
-crs: L.CRS.Simple
+var map = L.map("worldmap", {
+  attributionControl: false,
+  minZoom: 0,
+  maxZoom: 3,
+  center: [0, 0],
+  zoom: 0,
+  crs: L.CRS.Simple,
 });
 var w = 3840;
 var h = 2160;
-var url = './map.jpg';
+var url = "./map.jpg";
 var southWest = map.unproject([ 0, h], map.getMaxZoom()-1);
 var northEast = map.unproject([ w, 0], map.getMaxZoom()-1);
 var bounds = new L.LatLngBounds( southWest, northEast);
@@ -69,25 +69,57 @@ map.setMaxBounds(bounds);
 L.imageOverlay( url, bounds).addTo(map);
 
 var locations = [
-		  ["Море", "Описание моря", -400, 400],
-		  ["НЕ МОРЕ", "ОПИСАНИЕ НЕ МОРЯ", -400, 600],
-      /*Добавлять по аналогии: [Титульник, описание, x, y]*/
+      ["Точно море1", "Очень точно", -40, 100, "water"],
+      ["Точно море2", "Очень точно", -40, 200, "water"],
+      ["Точно море3", "Очень точно", -40, 300, "water"],
+		  ["Ноль1", "Ноль", 0, 0, "test"],
+		  ["Ноль2", "Ноль", -100, 0, "test"],
+		  ["Ноль3", "Ноль", -200, 0, "test"],
+		  ["НЕ МОРЕ", "ОПИСАНИЕ НЕ МОРЯ", -400, 600, ""],
+      /*Добавлять по аналогии: [Титульник, описание, x, y, тип маркера]*/
 ];
 
-var points = document.getElementsByClassName('leaflet-marker-icon');
+var noTypeGroup = L.layerGroup([]);
+var testGroup = L.layerGroup([]);
+var waterGroup = L.layerGroup([]);
 
 for (var i = 0; i < locations.length; i++) {
-	marker = new L.marker([locations[i][2],locations[i][3]])
-		.addTo(map);
-
-  points[i].onclick = setBlockData(i);
+	
+  switch(locations[i][4]) {
+    case "test":
+      test = new L.marker([locations[i][2],locations[i][3]])
+		  .addTo(map);
+      testGroup.addLayer(test);
+      break;
+    case "water":
+      water = new L.marker([locations[i][2],locations[i][3]])
+		  .addTo(map);
+      waterGroup.addLayer(water);
+      break;
+    default:
+      marker = new L.marker([locations[i][2],locations[i][3]])
+		  .addTo(map);
+      noTypeGroup.addLayer(marker);
+      break;
+  }
+  /*points[i].onclick = setBlockData(i);*/
 }
+
+var points = document.getElementsByClassName("leaflet-marker-icon");
+
+var overlayMaps = {
+  "Other": noTypeGroup,
+  "Test": testGroup,
+  "Water": waterGroup,
+};
+
+L.control.layers(null, overlayMaps).addTo(map);
 
 function setBlockData(i) {
   return function() {
-    document.getElementsByClassName('title')[0]
+    document.getElementsByClassName("title")[0]
             .innerText = locations[i][0];
-    document.getElementsByClassName('description')[0]
+    document.getElementsByClassName("description")[0]
             .innerHTML = locations[i][1];
   }
 }
