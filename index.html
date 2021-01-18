@@ -47,6 +47,11 @@
   <div class="block">
     <p class="title">test title</p>
     <p class="description">test desc</p>
+    <div class="buttons">
+      <span class="button" onclick="setPoints('water')">water</span>
+      <span class="button" onclick="setPoints('test')">test</span>
+      <span class="button" onclick="setPoints()">all</span>
+    </div>
   </div>
 
 <script>
@@ -79,41 +84,14 @@ var locations = [
       /*Добавлять по аналогии: [Титульник, описание, x, y, тип маркера]*/
 ];
 
-var noTypeGroup = L.layerGroup([]);
-var testGroup = L.layerGroup([]);
-var waterGroup = L.layerGroup([]);
+var visiblePoints = L.layerGroup([]);
 
 for (var i = 0; i < locations.length; i++) {
-	
-  switch(locations[i][4]) {
-    case "test":
-      test = new L.marker([locations[i][2],locations[i][3]])
-		  .addTo(map);
-      testGroup.addLayer(test);
-      break;
-    case "water":
-      water = new L.marker([locations[i][2],locations[i][3]])
-		  .addTo(map);
-      waterGroup.addLayer(water);
-      break;
-    default:
-      marker = new L.marker([locations[i][2],locations[i][3]])
-		  .addTo(map);
-      noTypeGroup.addLayer(marker);
-      break;
-  }
-  /*points[i].onclick = setBlockData(i);*/
+  marker = new L.marker([locations[i][2],locations[i][3]])
+  visiblePoints.addLayer(marker).addTo(map);
+  var points = document.getElementsByClassName("leaflet-marker-icon");
+  points[i].onclick = setBlockData(i);
 }
-
-var points = document.getElementsByClassName("leaflet-marker-icon");
-
-var overlayMaps = {
-  "Other": noTypeGroup,
-  "Test": testGroup,
-  "Water": waterGroup,
-};
-
-L.control.layers(null, overlayMaps).addTo(map);
 
 function setBlockData(i) {
   return function() {
@@ -123,6 +101,20 @@ function setBlockData(i) {
             .innerHTML = locations[i][1];
   }
 }
+
+function setPoints(group) {
+  map.removeLayer(visiblePoints);
+  for (var i = 0; i < locations.length; i++) {
+    if (locations[i][4] === group) {
+      console.log(locations[i][4]);
+      marker = new L.marker([locations[i][2],locations[i][3]])
+      visiblePoints.addLayer(marker).addTo(map);
+      var points = document.getElementsByClassName("leaflet-marker-icon");
+      points[i].onclick = setBlockData(i);
+    }
+  }
+}
+
 </script>
 </body>
 </html>
