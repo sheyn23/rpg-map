@@ -74,44 +74,88 @@ map.setMaxBounds(bounds);
 L.imageOverlay( url, bounds).addTo(map);
 
 var locations = [
-      ["Точно море1", "Очень точно", -40, 100, "water"],
-      ["Точно море2", "Очень точно", -40, 200, "water"],
-      ["Точно море3", "Очень точно", -40, 300, "water"],
-		  ["Ноль1", "Ноль", 0, 0, "test"],
-		  ["Ноль2", "Ноль", -100, 0, "test"],
-		  ["Ноль3", "Ноль", -200, 0, "test"],
-		  ["НЕ МОРЕ", "ОПИСАНИЕ НЕ МОРЯ", -400, 600, ""],
-      /*Добавлять по аналогии: [Титульник, описание, x, y, тип маркера]*/
+  {
+    id: 0,
+    title: "zero1",
+    description: "zero1desc",
+    x: 0,
+    y: 0,
+    type: "test",
+  },
+   {
+    id: 1,
+    title: "water1",
+    description: "water1desc",
+    x: -50,
+    y: 0,
+    type: "water",
+  },
+  {
+    id: 2,
+    title: "zero2",
+    description: "zero2desc",
+    x: 0,
+    y: -20,
+    type: "test",
+  },
+ {
+    id: 3,
+    title: "all1",
+    description: "all1desc",
+    x: 0,
+    y: 0,
+    type: "",
+  },
+{
+    id: 4,
+    title: "water",
+    description: "water1desc",
+    x: 0,
+    y: 0,
+    type: "water",
+  },
+{
+    id: 5,
+    title: "all2",
+    description: "all2desc",
+    x: 0,
+    y: 0,
+    type: "",
+  },
 ];
 
 var visiblePoints = L.layerGroup([]);
-
-for (var i = 0; i < locations.length; i++) {
-  marker = new L.marker([locations[i][2],locations[i][3]])
+console.log(locations[1]);
+for (let i = 0; i < locations.length; i++) {
+  marker = new L.marker([locations[i].x,locations[i].y)
   visiblePoints.addLayer(marker).addTo(map);
-  var points = document.getElementsByClassName("leaflet-marker-icon");
+  points = document.getElementsByClassName("leaflet-marker-icon");
+  console.log(points[i]);
   points[i].onclick = setBlockData(i);
+}
+
+function setPoints(group) {
+  visiblePoints.clearLayers();
+  for (let i = 0; i < locations.length; i++) {
+    if (locations[i].type === group) {
+      marker = new L.marker([locations[i]x,locations[i]y)
+      visiblePoints.addLayer(marker).addTo(map);
+    }
+  }
+  let points = document.getElementsByClassName("leaflet-marker-icon");
+  for (let i = 0; i < points.length; i++) {
+    console.log(points[i]);
+    points[i].onclick = setBlockData(i);
+  } 
 }
 
 function setBlockData(i) {
   return function() {
+    console.log(i);
     document.getElementsByClassName("title")[0]
-            .innerText = locations[i][0];
+            .innerText = locations[i].title;
     document.getElementsByClassName("description")[0]
-            .innerHTML = locations[i][1];
-  }
-}
-
-function setPoints(group) {
-  map.removeLayer(visiblePoints);
-  for (var i = 0; i < locations.length; i++) {
-    if (locations[i][4] === group) {
-      console.log(locations[i][4]);
-      marker = new L.marker([locations[i][2],locations[i][3]])
-      visiblePoints.addLayer(marker).addTo(map);
-      var points = document.getElementsByClassName("leaflet-marker-icon");
-      points[i].onclick = setBlockData(i);
-    }
+            .innerHTML = locations[i].description;
   }
 }
 
