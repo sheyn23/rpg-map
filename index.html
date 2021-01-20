@@ -63,95 +63,87 @@ var map = L.map("worldmap", {
   zoom: 0,
   crs: L.CRS.Simple,
 });
-var w = 3840;
-var h = 2160;
-var url = "./map.jpg";
-var southWest = map.unproject([ 0, h], map.getMaxZoom()-1);
-var northEast = map.unproject([ w, 0], map.getMaxZoom()-1);
+var southWest = map.unproject([ 0, 2160], map.getMaxZoom()-1);
+var northEast = map.unproject([ 3840, 0], map.getMaxZoom()-1);
 var bounds = new L.LatLngBounds( southWest, northEast);
 
 map.setMaxBounds(bounds);
-L.imageOverlay( url, bounds).addTo(map);
+L.imageOverlay( "./map.jpg", bounds).addTo(map);
 
 var locations = [
   {
-    id: 0,
     title: "zero1",
     description: "zero1desc",
-    x: 0,
-    y: 0,
+    x: -100,
+    y: 50,
     type: "test",
   },
    {
-    id: 1,
     title: "water1",
     description: "water1desc",
     x: -50,
-    y: 0,
+    y: 50,
     type: "water",
   },
   {
-    id: 2,
     title: "zero2",
     description: "zero2desc",
-    x: 0,
-    y: -20,
+    x: -100,
+    y: 100,
     type: "test",
   },
  {
-    id: 3,
     title: "all1",
     description: "all1desc",
-    x: 0,
-    y: 0,
+    x: -150,
+    y: 50,
     type: "",
   },
 {
-    id: 4,
     title: "water",
     description: "water1desc",
-    x: 0,
-    y: 0,
+    x: -50,
+    y: 100,
     type: "water",
   },
-{
-    id: 5,
+  {
     title: "all2",
     description: "all2desc",
-    x: 0,
-    y: 0,
+    x: -150,
+    y: 100,
     type: "",
   },
+  // Добавлять по схеме
+  /*
+  {
+    title: *Название*,
+    description: *Описание*,
+    x: *Координата X*,
+    y: *Координата Y*,
+    type: *Тип метки для фильтра*
+  },
+  */
 ];
 
 var visiblePoints = L.layerGroup([]);
-console.log(locations[1]);
-for (let i = 0; i < locations.length; i++) {
-  marker = new L.marker([locations[i].x,locations[i].y)
-  visiblePoints.addLayer(marker).addTo(map);
-  points = document.getElementsByClassName("leaflet-marker-icon");
-  console.log(points[i]);
-  points[i].onclick = setBlockData(i);
-}
 
-function setPoints(group) {
-  visiblePoints.clearLayers();
+function setPoints(type) { // Проверка на фильтр
+  clearLayer();
   for (let i = 0; i < locations.length; i++) {
-    if (locations[i].type === group) {
-      marker = new L.marker([locations[i]x,locations[i]y)
-      visiblePoints.addLayer(marker).addTo(map);
-    }
+    if (type && locations[i].type === type) setNewPoint(i);
+    if (!type) setNewPoint(i);
   }
-  let points = document.getElementsByClassName("leaflet-marker-icon");
-  for (let i = 0; i < points.length; i++) {
-    console.log(points[i]);
-    points[i].onclick = setBlockData(i);
-  } 
 }
 
-function setBlockData(i) {
+function setNewPoint(i) {  // Добавление поинта на слой
+  marker = new L.marker([locations[i].x,locations[i].y])
+                .on("click", setBlockData(i));
+  visiblePoints.addLayer(marker)
+               .addTo(map);
+}
+
+function setBlockData(i) { // Отображение названия и описания в блоке
   return function() {
-    console.log(i);
     document.getElementsByClassName("title")[0]
             .innerText = locations[i].title;
     document.getElementsByClassName("description")[0]
@@ -159,6 +151,11 @@ function setBlockData(i) {
   }
 }
 
+function clearLayer() {  //Очистка слоя
+  if (map.hasLayer(visiblePoints)) visiblePoints.clearLayers();
+} 
+
+setPoints(); //Точка входа, отрисовка всех поинтов
 </script>
 </body>
 </html>
